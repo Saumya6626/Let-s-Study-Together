@@ -1,0 +1,248 @@
+-- phpMyAdmin SQL Dump
+-- version 4.7.4
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Sep 12, 2021 at 04:58 PM
+-- Server version: 10.1.29-MariaDB
+-- PHP Version: 7.1.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `cmritlib`
+--
+
+DELIMITER $$
+--
+-- Procedures
+--
+DROP PROCEDURE IF EXISTS `get_book_log`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_book_log` ()  SELECT * from book_logs$$
+
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `admin_login`
+--
+
+DROP TABLE IF EXISTS `admin_login`;
+CREATE TABLE `admin_login` (
+  `email` varchar(30) NOT NULL,
+  `password` varchar(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `admin_login`
+--
+
+INSERT INTO `admin_login` (`email`, `password`) VALUES
+('nik555max@gmail.com', '123');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `book`
+--
+
+DROP TABLE IF EXISTS `book`;
+CREATE TABLE `book` (
+  `bid` int(11) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `authors` varchar(255) DEFAULT NULL,
+  `edition` varchar(255) DEFAULT NULL,
+  `status` varchar(25) DEFAULT NULL,
+  `department` varchar(25) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `book`
+--
+
+INSERT INTO `book` (`bid`, `name`, `authors`, `edition`, `status`, `department`) VALUES
+(110, 'Word Power Made Easy', 'Norman Lewis ', '3', 'Available', 'BS'),
+(1001, 'Code: The Hidden Language of Computer Hardware and... 	', 'Charles Petzold', '9th', 'Available', 'ISE'),
+(1002, 'Clean Code: A Handbook of Agile Software Craftsman...', 'Robert C Martin', '3rd', 'Available', 'ISE'),
+(1003, 'Code Complete: A Practical Handbook of Software Co...', 'Steve McConnell', '7th', 'Available', 'ISE'),
+(1004, 'Algorithms', 'Robert Sedgewick & Kevin Wayne', '5th', 'Available', 'ISE'),
+(1005, 'Types and Programming Languages', 'Benjamin C. Pierce', '4th ', 'Available', 'CSE'),
+(1006, 'The Algorithm Leader', 'Mike Walsh', '4th', 'Available', 'CSE'),
+(1007, 'Algorithm to Live By', 'Brian Christian & Tom Griffiths', '6th', 'Available', 'CSE'),
+(1008, 'Computer Science and Principles', 'Mr. Kevin P Hare', '5th', 'Available', 'CSE'),
+(1009, 'Cracking The Coding  Interviews', 'Nikhil Anand', '1', 'Available', 'ISE'),
+(1011, 'Burry the dead', 'Nikhil Anand', '1', 'Available', 'ISE'),
+(1012, 'Burry the dead', 'Nikhil Anand', '3', 'Available', 'BS'),
+(1013, 'Burry the dead', 'Nikhil Anand', '3', 'Available', 'BS'),
+(1014, 'The Discipline of Organising', 'Glushko', '4', 'Available', 'CV');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `book_logs`
+--
+
+DROP TABLE IF EXISTS `book_logs`;
+CREATE TABLE `book_logs` (
+  `bid` int(11) NOT NULL,
+  `username` varchar(30) NOT NULL,
+  `duedate` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `book_logs`
+--
+
+INSERT INTO `book_logs` (`bid`, `username`, `duedate`) VALUES
+(110, 'nik555max@gmail.com', '2021-01-28'),
+(1001, 'nian18is@cmrit.ac.in', '2021-01-28'),
+(1001, 'nik555max@gmail.com', '2021-01-29'),
+(1001, 'saumya@cmrit.ac.in', '2021-02-02'),
+(1011, 'nik555max@gmail.com', '2021-02-08'),
+(1004, 'nik555max@gmail.com', '2021-02-12'),
+(110, 'nik555max@gmail.com', '2021-08-30');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `issued_books`
+--
+
+DROP TABLE IF EXISTS `issued_books`;
+CREATE TABLE `issued_books` (
+  `bid` int(11) NOT NULL,
+  `book_name` varchar(30) NOT NULL,
+  `Date_of_issue` date NOT NULL,
+  `username` varchar(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `issued_books`
+--
+
+INSERT INTO `issued_books` (`bid`, `book_name`, `Date_of_issue`, `username`) VALUES
+(110, 'Word power made easy', '2021-01-17', 'nik555max@gmail.com'),
+(110, 'Word power made easy', '2021-01-18', 'nik555max@gmail.com'),
+(1001, 'Code: The Hidden Language of C', '2021-01-18', 'nian18is@cmrit.ac.in'),
+(1001, 'Code: The Hidden Language of C', '2021-01-19', 'nik555max@gmail.com'),
+(1001, 'Code: The Hidden Language of C', '2021-01-23', 'saumya@cmrit.ac.in'),
+(1011, '', '2021-01-29', 'nik555max@gmail.com'),
+(1004, '', '2021-02-02', 'nik555max@gmail.com'),
+(110, 'Word Power made Easy', '2021-08-20', 'nik555max@gmail.com');
+
+--
+-- Triggers `issued_books`
+--
+DROP TRIGGER IF EXISTS `duedate`;
+DELIMITER $$
+CREATE TRIGGER `duedate` BEFORE INSERT ON `issued_books` FOR EACH ROW Insert into book_logs(bid, username,duedate) values(new.bid,new.username,DATE_ADD(new.Date_of_issue , INTERVAL 10 DAY))
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `research`
+--
+
+DROP TABLE IF EXISTS `research`;
+CREATE TABLE `research` (
+  `Title` text NOT NULL,
+  `Content` text NOT NULL,
+  `Author` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `research`
+--
+
+INSERT INTO `research` (`Title`, `Content`, `Author`) VALUES
+('Subunit Vaccines Against Emerging Pathogenic Human Coronaviruses', 'Abstract\r\n\r\nSeven coronaviruses (CoVs) have been isolated from humans so far. Among them, three emerging pathogenic CoVs, including severe acute respiratory syndrome coronavirus (SARS-CoV), Middle East respiratory syndrome coronavirus (MERS-CoV), and a newly identified CoV (2019-nCoV), once caused or continue to cause severe infections in humans, posing significant threats to global public health. SARS-CoV infection in humans (with about 10% case fatality rate) was first reported from China in 2002, while MERS-CoV infection in humans (with about 34.4% case fatality rate) was first reported from Saudi Arabia in June 2012. 2019-nCoV was first reported from China in December 2019, and is currently infecting more than 70000 people (with about 2.7% case fatality rate). Both SARS-CoV and MERS-CoV are zoonotic viruses, using bats as their natural reservoirs, and then transmitting through intermediate hosts, leading to human infections. Nevertheless, the intermediate host for 2019-nCoV is still under investigation and the vaccines against this new CoV have not been available. Although a variety of vaccines have been developed against infections of SARS-CoV and MERS-CoV, none of them has been approved for use in humans. In this review, we have described the structure and function of key proteins of emerging human CoVs, overviewed the current vaccine types to be developed against SARS-CoV and MERS-CoV, and summarized recent advances in subunit vaccines against these two pathogenic human CoVs. These subunit vaccines are introduced on the basis of full-length spike (S) protein, receptor-binding domain (RBD), non-RBD S protein fragments, and non-S structural proteins, and the potential factors affecting these subunit vaccines are also illustrated. Overall, this review will be helpful for rapid design and development of vaccines against the new 2019-nCoV and any future CoVs with pandemic potential. This review was written for the topic of Antivirals for Emerging Viruses: Vaccines and Therapeutics in the Virology section of Frontiers in Microbiology.\r\nKeywords: human coronaviruses, pathogenesis, SARS-CoV, MERS-CoV, 2019-nCoV, subunit vaccines.', 'Ning Wang, Jian Shang, Shibo Jiang and Lanying Du'),
+('Should Homework be Abolished', 'Should homework be banned? This question bothers many students. According to statistics, teachers assign more assignments than an average student can handle in one night (more than 2 hours of work)! In this article, we are going to discuss more than 10 reasons why homework should be banned and reasons to leave minimum 30-minutes of homework per day.\r\n\r\nDo you agree or disagree with the fact homework should be banned? We have a unique offer for students in trouble. No matter which type of task a student faces, he/she should keep in mind a responsive, reliable team of certified writers is ready to write essays based on the customer’s instructions.\r\n\r\nExperts Explain Why Homework Should Be Banned\r\nHuffingtonPost in its article supports students from the United States and the United Kingdom who believe the amount of homework tasks is not fair. No more than 30 minutes of after-class tasks are recommended.\r\n\r\nThe primary reason most of the student\'s name when they try to explain why teachers should refuse homework is the boredom accompanied by laziness. However, scientists have proved there are more reasons to abandon after-class tasks. We offer 10 basic points to consider.\r\n\r\n10 Facts Why Homework Should Be Banned\r\nThese 10 facts why homework should be banned do not force schools and colleges to abandon after-class assignments.\r\n\r\n1. Down Time at Home.\r\n2 hours of homework is a punishment after sitting 8 hours in class. Going outside, dedicating time to friends, attending hobby clubs, helping parents, and, yes, watching TV and playing games make kids feel kids. Teachers should provide them with more free time.\r\n\r\n2.Negative Impacts on Tests\r\nShould schools ban homework to allow obtaining better grades on the exams? The answer is yes. While students focus on homework assignments, they risk failing to pass their examinations well. It appears that complicated, lengthy assignments are distractions like mobile devices, video games, television, friends, home duties, etc.\r\n\r\n3. Threat to Kid\'s nerves.\r\nWhy should schools ban homework for the sake of mental health? Teachers ignore the adverse impact of after-class tasks on the child’s brain and overall level of mental health.\r\n\r\n4.Extra Challenges.\r\nStudents who juggle business schedules with after-class activities, internship, or part-time job find it difficult to catch up with additional tasks. They are burned out by the end of the day and have no energy.\r\n\r\n5.Lack of support.\r\nOne of the valuable reasons why homework should be banned is the fact most teachers fail to explain everything needed to solve the task during the class. Parents cannot help with every task. Student’s friends lack the experience to help, and they have work to do. Professional online services are the only companies that can assist students with their academic tasks of any level.\r\n\r\n6.The way student perceive things.\r\nOne of the valuable reasons why homework should be banned is the fact most teachers fail to explain everything needed to solve the task during the class. Parents cannot help with every task. Student’s friends lack the experience to help, and they have work to do. Professional online services are the only companies that can assist students with their academic tasks of any level.\r\n\r\n\r\n', 'Nikhil Anand'),
+('When Scientists Find Nothing: The Value of Null Results', 'Science is an endeavor of trial and error. Can we find a better way to share the \"erroneous\" trials?\r\n\r\nHow long would it have taken Edison to invent the lightbulb if he and his team of workers hadn’t keep track of all the failures? From platinum filaments to animal hair, his team built a library of thousands of materials before patenting carbonized bamboo as the best material. Decades more would pass before Hungarian Sándor Just and Croatian Franjo Hanaman identified tungsten, the type of filament still used in incandescent lightbulbs today, as an even better material.\r\n\r\nIn science, these “failures” are sometimes known by their less disparaging name -- null results. They are an integral part of the exploratory nature of research. Finding a way to share this seemingly boring information can save scientists from repeating each other’s mistakes.\r\n\r\nSome of the most significant physics discoveries in the past decade, notably the detections of the Higgs boson by the Large Hadron Collider and gravitational waves by the LIGO collaboration, happened only after decades of null results helped fine-tune the experimental efforts that eventually made the discoveries.\r\n\r\nThese advances netted the Nobel Prize in physics in 2013 and 2017, respectively. But that doesn’t mean physicists have it all figured out. The LHC itself produces so much data that researchers can’t even record it all. And some research groups may struggle to find the resources or incentive to share less noteworthy null results.\r\n\r\nFor physicists to navigate through the wrong turns and dead ends that are an inevitable part of their jobs, they must weigh scientific considerations against practical concerns such as time, money and credit. It’s a complicated equation that researchers are still working to balance.\r\n\r\nCongratulations! You’ve found nothing: \r\n\r\nOver the last 100 years, the nature of scientific communication has not changed,” said Krishna Ratakonda, a computer scientist at IBM. “You do some data gathering and fieldwork, then you do some analysis and hypothesis and statistical testing, etc. Finally, you present some thesis and publish that as a paper.”\r\n\r\nThe scientific method as we know it is centered around the idea of coming up with a hypothesis, then gathering and using data to prove or disprove it, and rinse and repeat. Elegant on paper due to its simplicity, the process is complicated by the fact that null results often don’t get published, which may doom different research efforts into gathering the same data over and over again.\r\n\r\nAfter all, if you tested beard hair and found that it makes a terrible lightbulb filament -- as Edison did -- and decided to write a paper about it, it is unlikely to be accepted for publication in a peer-reviewed journal, and probably for good reasons.\r\n\r\nOne reason that null results often don’t get shared is that, compared to positive results, their importance is hard to intuitively judge. For example, imagine you found a material that can superconduct at a record high temperature -- clearly important. But if you tested a material thinking it might be superconducting but it turned out to be quite ordinary, it’s hard to know how important that information is.\r\n\r\nEpistemologists -- philosophers who think about the concept of knowledge -- have a thought experiment that illustrates the logical framework necessary for assessing the importance of negative results, and it has a cool name.\r\n\r\nThe raven paradox\r\n\r\nLet’s say the main goal of your research is to prove the following hypothesis: All ravens are black. Logic would allow you to frame your hypothesis alternatively: No nonblack item can be a raven.\r\n\r\nSo, the paradox is: Can you look at an apple, and seeing that it isn’t black and isn’t a raven, publish that as evidence for your hypothesis? That seems preposterous.\r\n\r\nEpistemologists would argue that it depends on the context of the research. Since the amount of confirmation provided by the red apple is negligibly small, it has practically no value. But if you can gather all the nonblack objects in the world and show that none of them is a raven, then you would have a case for your paper. This statistics-based perspective to the raven paradox is known as the Bayesian solution, named after the 18th century English statistician Thomas Baye.', 'nian18is@cmrit.ac.in'),
+('Debate Settler', 'Let\'s Settle the debate.\r\n', 'nik555max@gmail.com'),
+('Hello', 'How are you?', 'nik555max@gmail.com'),
+('Tindog', 'A website for dogs!!', 'nikhilanand07@gmail.com'),
+('Let\'s create a website today!!', 'Hoooooo!! I am excited for it.', 'nik555max@gmail.com'),
+('Essay Structure', 'Writing an academic essay means fashioning a coherent set of ideas into an argument. Because essays are essentially linear—they offer one idea at a time—they must present their ideas in the order that makes most sense to a reader. Successfully structuring an essay means attending to a reader\'s logic.\r\n\r\nThe focus of such an essay predicts its structure. It dictates the information readers need to know and the order in which they need to receive it. Thus your essay\'s structure is necessarily unique to the main claim you\'re making. Although there are guidelines for constructing certain classic essay types (e.g., comparative analysis), there are no set formula.', 'nik555max@gmail.com'),
+('Debate Settler', 'Let\'s settle the debate!!', 'nik555max@gmail.com'),
+('DBMS project', 'Anything ', 'nian18is@cmrit.ac.in'),
+('Grass Hoppers', 'They are very good creatures. They are lovely creatures.', 'saumya@cmrit.ac.in'),
+('Republic day', 'Indias biggest festival', 'nik555max@gmail.com'),
+('sawrtt', 'sff', 'nik555max@gmail.com'),
+('djdsfd', 'dgdffghgf', 'nik555max@gmail.com'),
+('Is it ', '', 'nik555max@gmail.com'),
+('Hello ', 'Hello world', 'nik555max@gmail.com');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `username` varchar(25) DEFAULT NULL,
+  `password` varchar(25) DEFAULT NULL,
+  `usn` varchar(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`username`, `password`, `usn`) VALUES
+('nikhil', 'pwd', 'usn'),
+('nik555max@gmail.com', '12345', '1cr18is180'),
+('nik555max@gmail.com', '123', NULL),
+('nik555max@gmail.com', '123', '1CR18IS180'),
+('nik555max@gmail.com', 'anand123', '1CR18IS180'),
+('nik555max@gmail.com', 'anand123', '1CR18IS180'),
+('nian18is@cmrit.ac.in', 'cmrit123', '1CR18IS180'),
+('nikhilanand07@gmail.com', '1', '1'),
+('anandnikhil606@gmail.com', 'anand123', '1CR18IS180'),
+('anandnikhil606@gmail.com', 'anand123', '1CR18IS180'),
+('nian18is@cmrit.ac.in', '12345', '1CR18IS180'),
+('nian18is@cmrit.ac.in', '123', '1CR18IS180'),
+('saumya@cmrit.ac.in', 'saya', '1CR18IS178');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `book`
+--
+ALTER TABLE `book`
+  ADD PRIMARY KEY (`bid`);
+
+--
+-- Indexes for table `issued_books`
+--
+ALTER TABLE `issued_books`
+  ADD KEY `bid` (`bid`);
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `issued_books`
+--
+ALTER TABLE `issued_books`
+  ADD CONSTRAINT `issued_books_ibfk_1` FOREIGN KEY (`bid`) REFERENCES `book` (`bid`) ON DELETE CASCADE;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
